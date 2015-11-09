@@ -1,0 +1,62 @@
+##when less than k squares filled
+    while count < nvars:
+        
+        ##get the var-val pair based on a random way
+        result = addconn(count, variables, domain_dict, assignment_dict, constraint_list)
+        
+        ##if there is one variable which did not assign before, but without value can assign to
+        if result[-1]:
+            return None
+        
+        else:
+            var = result[0]
+            val = result[1]
+            domain_dict = result[2]
+            assignment_dict = result[3]
+            count = result[4]
+            
+            file.writelines('con ' + var + ' : ' + val + '\n')
+            
+    
+    file.close()
+
+def addconn(count, variables, domain_dict, assignment_dict, constraint_list):
+    
+    '''add the conn to file and test this process of creating file is success or not
+    (int, list, {str : str}, {str : str}, list) -> (str, str, int, {str : str}, {str : str}, int, bool)
+    '''
+    
+    ##a boolean value to help us know there is conflict or not
+    Boolean_value = False
+    
+    ##get a random var-value pair to save
+    index = random.randint(0, len(variables) - 1)
+    var = variables[index]
+    
+    ##test there is still left value to make var to assign
+    if len(domain_dict[var]) > 0:
+        index = random.randint(0, len(domain_dict[var]) - 1)
+        val = domain_dict[var][index]
+    
+        ##save them into assignment and update domain_dict and variables
+        assignment_dict[var] = val
+        domain_dict[var] = val
+        variables.remove(var)
+        
+        ##reduce the domain of variables which neighbour of var
+        for neighbour_list in constraint_list:
+            if var in neighbour_list:
+                for variable in neighbour_list:
+                    if variable != var:
+                        if val in domain_dict[variable]:
+                            domain_dict[variable].remove(val)
+        
+        count = count + 1
+        
+    ##if the var has not value could select, this process of creatiing is fail
+    else:
+        Boolean_value = True
+        return Boolean_value
+        
+    return (var, val, domain_dict, assignment_dict, count, Boolean_value)
+    

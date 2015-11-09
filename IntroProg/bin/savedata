@@ -1,0 +1,16 @@
+if ((inventory_map.keySet()).contains(input1)) {
+			System.out.println("You alraedy have this name of bottle in the inventory, do you wan to add the quantity of this bottle with same situation? Y/N");
+			String input = scn.nextLine();
+			if (input.equals("Y")) {
+				for (Bottle bottle : inventory) {
+					if (input1.equals((bottle.getBeer()).getBrandName())) {
+						System.out.println("Please type the number of bottles which would out of inventory: ");
+						int input_num = scn.nextInt();
+						bottle.setQuantity(bottle.getQuantity() + input_num);
+					}
+				}
+			}
+			if (input.equals("N")) {
+				subin(input1);
+			}
+		}

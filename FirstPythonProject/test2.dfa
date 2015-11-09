@@ -1,0 +1,9 @@
+start state0
+accepting state4
+edge state0 state1 s
+edge state1 state2 a
+edge state1 state2 i
+edge state1 state2 o
+edge state1 state2 u
+edge state2 state3 n
+edge state3 state4 g

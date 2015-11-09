@@ -1,0 +1,127 @@
+###############################
+## Q3 Answer: algorithm part ##
+###############################
+
+
+'''for Q3, according to the question requirement, alpha is #0.1#, epsilon 
+is 0.005, and the last 500 episodes should take off epsilon. Firstly, we
+should make sure use sufficiently many episodes so that algorithm converges.
+In order to make sure this situation, we should make sure the final trend is
+'stable' in graph between time size and episode. At the same time, this Question
+aims to get the delta function of episode length.
+'''
+
+
+##get a loop to form delta number
+delta = 0.0
+
+##create two list to save result
+delta_list = []
+episode_list = []
+
+while delta <= 1:
+    env = get_windy_grid_water(delta, -10)
+    agent = Sarsa(0.1, 0.99, 0.005, env.num_states, env.actions)
+
+    ##first of all, when Sarsa algorithm is not convergence
+    while not agent.convergence:
+        
+        ##create a count number to update episode length in batch
+        count = 0
+        
+        ##used to save episode lengths in 300 times
+        patch_lengths = 0.0
+        while count < 300:
+            count = count + 1
+            
+            ##create time_step to save episode length
+            time_step = 0
+            
+            ##initialize s
+            state = env.pos_to_state(env.init_pos)
+            
+            ##choose an action from Q based on state
+            action = agent.select_action(state)
+            
+            ##repeat until achieve the goal pos
+            while not env.end_of_episode():
+                
+                ##take action, and get reward, new state, new position, add one time_step
+                result = env.generate(action)
+                reward = result[-1]
+                new_state = result[0]
+                
+                ##choose an new_action from Q based on new_state
+                new_action = agent.select_action(new_state)
+                
+                ##update Q
+                agent.update_Q(state, action, new_state, new_action, reward)
+                
+                ##assign new_stae and new_action to state and action
+                action = str(new_action)
+                state = int(new_state)
+                
+                ##add the time_step
+                time_step = time_step + 1
+                
+            ##test the algorithm is convergence or not
+            patch_lengths = patch_lengths + time_step
+            
+        ##get the average episode lengths in patch
+        patch_lengths = float(patch_lengths / 300)
+        
+        ##test the algorithm is convergence or not
+        agent.test_convergence(patch_lengths)
+        
+        ##if not convergence, make the current patch_length to past_episode
+        if not agent.convergence:
+            agent.past_episode = float(patch_lengths)
+        
+    ##when the algorithm convergence, set epsilon to 0
+    if agent.convergence:
+        agent.epsilon = 0
+        
+        ##create episode to act as count to 500
+        episode = 0
+        
+        ##create sum_time to save total time size of 500 times episodes
+        sum_time = 0.0
+        while episode < 500:
+            episode = episode + 1
+            time_step = 0
+            state = env.pos_to_state(env.init_pos)
+            
+            ##there is no need to update Q, because algorithm is convergence
+            while not env.end_of_episode():
+                action = agent.select_action(state)
+                new_state = env.generate(action)[0]
+                state = int(new_state)
+                time_step = time_step + 1
+            sum_time = sum_time + time_step
+
+        ##get the average of 500 episodes
+        episode_length = sum_time / 500
+    
+    ##add these delta and averge_episode_length information into former list
+    delta_list.append(delta)
+    episode_list.append(episode_length)
+
+    ##when finish collecting data with 500 times episodes, add 0.1 to delta
+    delta = delta + 0.1
+
+###################################
+## Q3 Answer: graph display part ##
+###################################
+
+import matplotlib.pyplot as plt
+plt.title("Q3 Graphic")
+plt.ylabel("Episodes length")
+plt.xlabel("Delta")
+
+##add the information into x-label and y-label, and show
+plt.plot(delta_list,episode_list, label="Delta' function of Episode length")
+plt.legend(loc='lower right')
+plt.show()
+
+
+

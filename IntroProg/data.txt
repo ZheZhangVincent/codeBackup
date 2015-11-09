@@ -1,0 +1,241 @@
+Sydney,Dickson,5678,5
+Sydney,Dickson,5678,0
+Sydney,Dickson,6777,10
+Sydney,Wallo,7878,77
+Canberra,Harrison,1987,66
+
+
+for (int count = 0; count < (Change_list.size() - PartyAb_list.size()); count++ ) {
+	if (! PreCount_list.get(count).equals(Change_list.get(count + PartyAb_list.size()))){
+		System.out.println(PreCount_list.get(count));
+		System.out.println(Change_list.get(count + PartyAb_list.size()));
+	}
+	
+	
+public ArrayList<PollingPlace> getPPlist() {
+		return PPlist;
+	}
+
+	public void setPPList(ArrayList<PollingPlace> PPList) {
+		this.ArrayList<PollingPlace> PPList = PPList;
+	}
+	
+	
+private static SourceData ReadData() {
+		try {
+		BufferedReader br = new BufferedReader(new FileReader("data.txt"));
+		String line = null;
+		List<RowData> dataLines = new ArrayList<RowData>();
+		SourceData sd = new SourceData();
+		while ((line = br.readLine()) != null) {
+			String[] items = line.trim().split(",");
+			RowData data = new RowData();
+			data.city = items[0];
+			data.subarb = items[1];
+			data.code = items[2];
+			data.num = Integer.parseInt(items[3]);
+			dataLines.add(data);
+			sd.addRowData(data);
+		}
+		return sd;
+	}
+	}
+	
+	public int getmax_column_num() {
+		
+		BufferedReader br = null;
+		String line = "";
+		String csvFile = "./HouseDopByPPDownload-17496/HouseDopByPPDownload-17496-NSW-EMON.csv";
+		int max_column_num = 0;
+		
+		try {
+			br = new BufferedReader(new FileReader(csvFile));
+			while ((line = br.readLine()) != null) {
+				String[] items = line.split("\",\"");
+				if (max_column_num < items.length)
+				{
+					max_column_num = items.length;
+				}				
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		
+	}
+		return max_column_num;
+	}
+
+	public void getcolumnTitle() throws IOException {
+		
+		BufferedReader br = null;
+		String line = "";
+		String csvFile = "./HouseDopByPPDownload-17496/HouseDopByPPDownload-17496-NSW-EMON.csv";
+		int max_column_num = 0;
+		
+		//this block aims to get the relationship between column titles and numbers
+		//and the column title which not contains ""
+		br = new BufferedReader(new FileReader(csvFile));			
+		String[] max_items = null;
+		
+		while ((line = br.readLine()) != null) {
+			String[] items = line.split(",");
+			max_items = items;
+			if (items.length == max_column_num) break;
+		}			
+		for (int index = 0; index < max_items.length; index++) {
+			columnTitle.put(max_items[index],index);
+		}
+		
+		}
+		
+		
+		StringTokenizer st = new StringTokenizer(line,",");
+				 while (st.hasMoreTokens()) {
+					//
+			     }
+			     
+			     
+			     
+		public int getcolumnsize() {
+		String csvFile = "./HouseDopByPPDownload-17496/HouseDopByPPDownload-17496-NSW-EMON.csv";
+		BufferedReader br = null;
+		String line = "";
+		columnsize = 0;
+		
+		try {
+			br = new BufferedReader(new FileReader(csvFile));
+			while ((line = br.readLine()) != null) {
+				String[] items = line.trim().split("\",\"");
+				if (items.length > columnsize) {
+					columnsize = items.length;
+				}
+			}
+		} 
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return columnsize;
+	}
+	
+public int getmax_column_num() {
+		
+		BufferedReader br = null;
+		String line = "";
+		String csvFile = "./HouseDopByPPDownload-17496/HouseDopByPPDownload-17496-NSW-EMON.csv";
+		int max_column_num = 0;
+		
+		try {
+			br = new BufferedReader(new FileReader(csvFile));
+			while ((line = br.readLine()) != null) {
+				String[] items = line.split("\",\"");
+				if (max_column_num < items.length)
+				{
+					max_column_num = items.length;
+				}				
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		
+	}
+		return max_column_num;
+	}
+
+	public void getcolumnTitle() throws IOException {
+		
+		BufferedReader br = null;
+		String line = "";
+		String csvFile = "./HouseDopByPPDownload-17496/HouseDopByPPDownload-17496-NSW-EMON.csv";
+		int max_column_num = 0;
+
+		br = new BufferedReader(new FileReader(csvFile));			
+		String[] max_items = null;
+		
+		while ((line = br.readLine()) != null) {
+			String[] items = line.split(",");
+			max_items = items;
+			if (items.length == max_column_num) break;
+		}			
+		for (int index = 0; index < max_items.length; index++) {
+			columnTitle.put(max_items[index],index);
+		}
+		
+		}
+	
+	public void addlongfile(PollingPlace data) {
+		String key = generateKey(data.PPNm, data.PartyAb, data.CalculationType, data.CalculationValue);
+		this.datamap.put(key, data);
+	}
+
+	private String generateKey(String PPNm, String PartyAb, String CalculationType, int CalculationValue) {
+		String key = PPNm + "-" + PartyAb + "-" + CalculationType + "-" + CalculationValue;
+		return key;
+	}
+	
+	public PollingPlace getRawData(String PPNm, String PartyAb, String CalculationType, int CalculationValue) {
+		return datamap.get(this.generateKey(PPNm, PartyAb, CalculationType, CalculationValue));
+	}
+	
+	public List<PollingPlace> getdatamap() {
+		return new ArrayList<PollingPlace>(this.datamap.values());
+	}
+	
+	private static PollingPlace ReadData() throws Exception {
+		String csvFile = "./HouseDopByPPDownload-17496/HouseDopByPPDownload-17496-NSW-EMON.csv";
+		BufferedReader br = null;
+		String line = "";
+		List<PollingPlace> dataLines = new ArrayList<PollingPlace>();
+		br = new BufferedReader(new FileReader(csvFile));
+		PollingPlace ppdata = new PollingPlace();
+		while ((line = br.readLine()) != null) {
+			String[] items = line.trim().split("\",\"");
+			if (items.length == columnsize) {
+			PollingPlace data = new PollingPlace();
+			data.StateAb = items[(int) columnTitle.get("StateAb")].replaceAll("\"", "");
+			data.CountNum = Integer.parseInt(items[(int) columnTitle.get("CountNum")].replaceAll("\"", ""));
+			data.PartyAb = items[(int) columnTitle.get("PartyAb")].replaceAll("\"", "");
+			data.SittingMemberFl = items[(int) columnTitle.get("SittingMemberFl")].replaceAll("\"", "");
+			data.CalculationType = items[(int) columnTitle.get("CalculationType")].replaceAll("\"", "");
+			data.CalculationValue =  Integer.parseInt(items[(int) columnTitle.get("CalculationValue")].replaceAll("\"", ""));
+			dataLines.add(data);
+			ppdata.addlongfile(data);
+			}
+		}
+		return ppdata;
+	} 
+	
+	for (PollingPlace data : pp.ReadShortData()) {
+			System.out.println(data.PPNm + " , " + data.PartyAb + " : " + data.ShortTransferCount);
+		}

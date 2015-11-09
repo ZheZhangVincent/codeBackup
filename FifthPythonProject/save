@@ -1,0 +1,47 @@
+
+##create a time_step to save time_step information
+##create a time_steps to save time_step point information
+time_step = 0
+time_steps = []
+
+##for each episode
+while episode >= 0:
+    
+    ##for the last 500 times episode, the epsilon change to 0
+    if episode < 500:
+        agent.epsilon == 0
+    
+    ##initialize s (state is int)
+    state = env.pos_to_state(env.init_pos)
+    
+    ##repeat until achieve the goal pos (this method also initial state )
+    while not env.end_of_episode():
+        
+        ##choose an action from Q based on state (action is string)
+        action = agent.select_action(state)
+        
+        ##take action, and get reward, new state, new position, add one time_step
+        reward = env.generate(action)[-1]
+        new_state = env.pos_to_state(env.generate(action)[0])
+        env.current_pos = env.generate(action)[0]
+        time_step = time_step + 1
+        
+        ##update Q
+        agent.update_Q(state, action, new_state, reward)
+        
+        ##assign new_stae to state
+        state = int(new_state)
+    
+    ##after finish this episode, minus one episode time
+    episode = episode - 1
+    
+    ##add the episode and time_step information into list to show in graph
+    episodes.append(3000 - episode)
+    time_steps.append(time_step)
+
+
+
+
+
+
+

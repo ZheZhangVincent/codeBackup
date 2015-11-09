@@ -1,0 +1,55 @@
+This is a _original_ version (with some annotations) of the 
+"CAPTCHA with SVG fonts and JavaFX" CAPTCHA generating program
+for Assignment 2, COMP6700.2014. 
+
+The README file (this one) explains how to _easily_ compile and run this
+application without creating a project in an IDE of your choice.
+It also demonstrates usage of the javadoc utility to (re-)generate
+the documentation for this project.
+
+1. To compile to the package structure run:
+
+javac -cp .:/usr/lib/jvm/jdk1.7.0_15/jre/lib/jfxrt.jar -d bin -sourcepath src/ src/CaptchaFX.java
+
+or, using the make utility (programmed in Makefile)
+
+make compile
+
+2. To generate the javadoc pages run (all options on one line):
+
+javadoc @doc_args src/*.java src/*/*.java
+
+or, simply
+
+make doc
+
+3. To run the _original_ application JavaFX, first you should choose
+which SVG-font file from the directory svgfonts you want the program
+to use. Eg, if you've chosen DroidSans-webfont.svg file, then the program
+should be run as follows::
+
+java -cp bin:/usr/lib/jvm/jdk1.7.0_15/jre/lib/jfxrt.jar captchafx.CaptchaFX svgfonts/DroidSans-webfont.svg  &
+
+If you like, one can use make and it will choose the font randomly for you:
+
+make run
+
+Important: in your work on completing this program, you should remove this reliance
+of command-line argument, so that  the program can start alone, and then use 
+_all svg-font files_ to make a random selection of fonts and glyph in the same
+character sequence which is used to create a captcha.
+
+Important: the JavaFX run-time environment may be different on your system
+(eg. you can have a different version, AND/OR it can be located in a different
+path). In such case, you need to replace the above string
+"/usr/lib/jvm/jdk1.7.0_15/jre/lib/jfxrt.jar" onto analogous one which
+is relevant to your system. Run command (I assume you se UNIX/Linux command-line
+interface)
+
+locate jfxrt.jar
+
+and examine the output to make appropriate changes in the Makefile.
+If you will use an IDE (and I advise to do it), it can discover the location
+of the necessary libraries (including JavaFX) itself. Latest SDK 7 releases
+from Oracle have JavaFX integrated with Java Run-Time; this is not the case
+for Open JDK, to which JavaFX must be added using an approach like above.

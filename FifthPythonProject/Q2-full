@@ -1,0 +1,148 @@
+#######################################################
+## Q2 Answer: algorithm part (alpha from 0.1 to 1.0) ##
+#######################################################
+
+'''for Q2, according to the question requirement, the gamma is 0.99 epsilon 
+is 0.01, and the alpha is a changing float number from 0 to 1.'''
+
+##initialized alpha from 0 to 1, however, because of the display problem,
+##the situation alpha = 0 would get not according to this loop
+alpha = 0.1
+
+##create lists to used collect 10 kinds of situation (from 0.1, 0.2 ... to 1.0)
+episode_index = [[] for x in range(10)]
+time_steps_index = [[] for x in range(10)]
+
+index = 0
+
+while alpha <= 1:
+
+    ##get the environment by get_windy_grid method
+    env = get_windy_grid()
+    
+    ##get the Sarsa agent (alpha select 0.1 as example, and other just code without comments)
+    agent = Sarsa(alpha, 0.99, 0.01, env.num_states, env.actions)
+    
+    ##set the episode number to 150, to collected the time steps numbers
+    ##create episodes to save episode information
+    episode = 150
+    episode_index[index] = []
+    
+    ##create count and list to save time_step information
+    time_step = 0
+    time_steps_index[index] = []
+    
+    ##for each episode
+    while episode >= 0:
+        
+        ##initialize s 
+        state = env.pos_to_state(env.init_pos)
+        
+        ##choose an action from Q based on state
+        action = agent.select_action(state)
+        
+        ##repeat until achieve the goal pos 
+        while not env.end_of_episode():
+            
+            ##take action, and get reward, new state, new position, add one time_step
+            result = env.generate(action)
+            reward = result[-1]
+            new_state = result[0]
+            time_step = time_step + 1
+            
+            ##choose an new_action from Q based on new_state
+            new_action = agent.select_action(new_state)
+            
+            ##update Q
+            agent.update_Q(state, action, new_state, new_action, reward)
+            
+            ##assign new_stae and new_action to state and action
+            action = str(new_action)
+            state = int(new_state)
+        
+        ##after finish this episode, minus one episode time
+        episode = episode - 1
+ 
+        ##add the episode and time_step information into list to show in graph
+        episode_index[index].append(150 - episode)
+        time_steps_index[index].append(time_step)
+        
+    ##add intervals to alpha and index's value
+    alpha = alpha + 0.1
+    index = index + 1
+
+
+###########################################################
+## Q2 Answer: graph display part (alpha from 0.1 to 1.0) ##
+###########################################################
+
+##Here is how to plot with matplotlib
+import matplotlib.pyplot as plt
+
+##set graphic name and x, y label's name
+plt.title("Q2 Graphic (from 0.1 to 1.0)")
+plt.ylabel("Episodes")
+plt.xlabel("Time steps")
+
+##add the information into x-label and y-label
+for index in range(10):
+    lebel_name = 'Alpha is ' + str((index + 1)/10.0)
+    plt.plot(time_steps_index[index], episode_index[index], label = lebel_name )
+
+plt.legend(loc='lower right')
+plt.show()
+
+############################################
+## Q2 Answer: algorithm part (alpha is 0) ##
+############################################
+
+'''in fact, this part is almost same to upper codes, just set alpha to 0'''
+alpha = 0.0
+
+episode_index = []
+time_steps_index = []
+env = get_windy_grid()
+agent = Sarsa(alpha, 0.99, 0.01, env.num_states, env.actions)
+
+episode = 150
+time_step = 0
+
+while episode >= 0:
+    state = env.pos_to_state(env.init_pos)
+    action = agent.select_action(state)
+        
+    while not env.end_of_episode():  
+        result = env.generate(action)
+        reward = result[-1]
+        new_state = result[0]
+        time_step = time_step + 1
+        new_action = agent.select_action(new_state)
+        agent.update_Q(state, action, new_state, new_action, reward)
+        action = str(new_action)
+        state = int(new_state)
+        
+    episode = episode - 1
+    episode_index.append(150 - episode)
+    time_steps_index.append(time_step)
+
+
+
+###############################################
+# Q2 Answer: graph display part (alpha is 0) ##
+###############################################
+
+import matplotlib.pyplot as plt
+
+plt.title("Q2 Graphic (alpha is 0)")
+plt.ylabel("Episodes")
+plt.xlabel("Time steps")
+
+plt.plot(time_steps_index, episode_index, label = 'Alpha is 0.0' )
+plt.legend(loc='lower right')
+plt.show()
+
+
+
+
+
+

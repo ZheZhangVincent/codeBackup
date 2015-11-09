@@ -1,0 +1,57 @@
+#####################
+## Q5 Testing Code ##
+#####################
+
+'''this part is perform Sarsa, to get data for initi_Q value from -100 to 0.0
+'''
+
+##create lists to save information
+finish_lengths = []
+give_nums = []
+
+env = get_windy_grid_water(0, -100)
+agent = Sarsa(0.1, 0.99, 0.0, env.num_states, env.actions)
+give_num = 0.0
+
+while give_num >= -100:
+    
+    ##initial the Q values to the give_num (from -100 to 0)
+    agent.initial_Q(give_num)
+    
+    ##collected 500 times to reduce the fluctuate of result line
+    count = 0
+    patch_lengths = 0.0
+    while count < 500:
+        count = count + 1
+        time_step = 0
+        state = env.pos_to_state(env.init_pos)
+        action = agent.select_action(state)
+        while not env.end_of_episode():             
+            result = env.generate(action)
+            reward = result[-1]
+            new_state = result[0]
+            new_action = agent.select_action(new_state)
+            agent.update_Q(state, action, new_state, new_action, reward)
+            action = str(new_action)
+            state = int(new_state)
+            time_step = time_step + 1
+            
+        patch_lengths = patch_lengths + time_step
+        
+    ##save the collected data
+    finish_lengths.append(patch_lengths / 500.0)
+    give_nums.append(give_num)
+    give_num = give_num - 0.1
+
+
+import matplotlib.pyplot as plt
+
+##set graphic name and x, y label's name
+plt.title("Q5 Graphic (Test Lowest Initi_Num)")
+plt.ylabel("Finish_Length")
+plt.xlabel("Give_Nums")
+
+plt.plot(give_nums, finish_lengths, label = 'Relation between Finish_Length and Init_Nums' )
+
+plt.legend(loc='lower right')
+plt.show()

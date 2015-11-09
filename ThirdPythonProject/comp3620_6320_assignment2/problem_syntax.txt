@@ -1,0 +1,41 @@
+This solver can handle problems with enumerated variables with finite domains.
+
+It allows binary and unary constraints as well as alldiff and allsame constraints.
+
+These files have the following format.
+
+Lines starting with var, define a number of variables and their domains.
+For example:
+
+    var QLD NSW VIC ACT SA : red green blue
+
+will create the variables QLD NSW VIC ACT and SA and give them all the
+domain red, green, blue.
+
+It is possible to specify arbitrary binary constraints as follows:
+
+    con WA NT : red green : red blue : green red : green blue : blue red : blue green
+    
+This says that the variables WA and NT can take one of the listed pairs
+of values.
+
+Unary constraints are possible and are handled by preprocessing:
+
+    con NT : red : blue
+
+This constraint will restrict the domain of NT to red and blue before search begins.
+
+There are also some more constraints, which the solver will compile into normal
+binary constraints.
+
+The alldiff constraint indicates that all of the variables in the list must have
+different values. For example:
+
+    alldiff ACT NSW SA
+    
+The allsame constraint ndicates that all of the variables in the list must have
+the same value. For example:
+
+    allsame ACT NSW WA
+
+

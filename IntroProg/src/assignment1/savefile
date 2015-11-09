@@ -1,0 +1,130 @@
+
+	public HashMap<String, Integer> getcolumnTitle() {
+		
+		String csvFile = "./HouseDopByPPDownload-17496/HouseDopByPPDownload-17496-NSW-EMON.csv";
+		BufferedReader br = null;
+		String line = "";
+		String[] max_items = null;
+		
+		try {
+			br = new BufferedReader(new FileReader(csvFile));
+			while ((line = br.readLine()) != null) {
+				String[] items = line.trim().split(",");
+				max_items = items;
+				if (items.length == this.getcolumnsize()) break;
+			}
+			for (int index = 0; index < max_items.length; index++) {
+				columnTitle.put(max_items[index],index);
+			}
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		return columnTitle;
+	}
+	
+	
+	
+	
+	
+	
+	private static List<PollingPlace> ReadPPFile(String csvFile) {
+		
+		List<PollingPlace> dataLines = new ArrayList<PollingPlace>();
+		List<LineInformation> temp_array = new ArrayList<LineInformation>();
+		for (List line : ElectionScrutinizer.readFile(csvFile)) {
+			String[] items = line.split("-%-");
+			LineInformation Li = new LineInformation(items);
+			temp_array.add(Li);
+		}
+		Map<String ,Integer> tem_pre_count_map = new HashMap<String ,Integer>();
+		Map<String ,Integer> tem_ter_count_map = new HashMap<String ,Integer>();
+		for (int index = 0; index < (temp_array.size() - 1); index++) {
+			LineInformation temp1 = temp_array.get(index);
+			LineInformation temp2 = temp_array.get(index + 1);
+			if (temp1.PPNm.equals(temp2.PPNm)) {
+				if (temp1.CountNum == temp2.CountNum) {
+					if (temp1.CalculationType.equals("Preference Count")) {
+						tem_pre_count_map.put(temp1.PartyAb, (int) temp1.CalculationValue);
+					}
+					if (temp1.CalculationType.equals("Transfer Count")) {
+						tem_ter_count_map.put(temp1.PartyAb, (int) temp1.CalculationValue);
+					}
+				}
+				else {
+					PollingPlace pp = new PollingPlace();
+					pp.PPNm = temp1.PPNm;
+					pp.PartyAb = temp1.PartyAb;
+					pp.CountNum = temp1.CountNum;
+					pp.pre_count_map = tem_pre_count_map;
+					Set<String> set = tem_ter_count_map.keySet();
+					for (String temp : set) {
+						if (tem_pre_count_map.get(temp) != null){
+							tem_ter_count_map.put(temp, tem_pre_count_map.get(temp).intValue() - tem_ter_count_map.get(temp).intValue());
+						}
+					}
+					pp.gap_count_map = tem_ter_count_map;
+					dataLines.add(pp);
+					tem_pre_count_map = null;
+					tem_ter_count_map = null;
+				}
+			}
+		}
+		return dataLines;
+	}
+	
+	
+	
+	if ((datafromfile.get(index)).get(4).equals((datafromfile.get(index + 1)).get(4))) {
+				if (((datafromfile.get(index)).get(5)).equals((datafromfile.get(index + 1)).get(5))) {
+					if ((datafromfile.get(index)).get(datafromfile.get(index).size() - 2).equals("Preference Count")) {
+						pre_map.put((datafromfile.get(index)).get(10), (datafromfile.get(index)).get(datafromfile.get(index).size() - 1));
+					}
+					if ((datafromfile.get(index)).get(datafromfile.get(index).size() - 2).equals("Transfer Count")) {
+						ter_map.put((datafromfile.get(index)).get(10), (datafromfile.get(index)).get(datafromfile.get(index).size() - 1));
+					}
+				}
+				else {
+					PollingPlace pp = new PollingPlace((String) (datafromfile.get(index)).get(4), (int)(datafromfile.get(index)).get(5), pre_map, ter_map, temp_map);
+					dataLines.add(pp);
+					pre_map.clear();
+					ter_map.clear();
+				}
+			}
+			
+			
+			PollingPlace pp = new PollingPlace((String) ((datafromfile.get(index)).get(4)), (int)((datafromfile.get(index)).get(5)), pre_map, ter_map);
+						String string1 = (String) (datafromfile.get(index)).get(4);
+			int int1 = (int)(datafromfile.get(index)).get(5);
+			
+			
+			
+			total_bool = true;
+		System.out.print("the two candidate preferered flow of preference set ... checking ---");
+		for (PollingPlace pp : PollingPlace.GetData()) {
+			if (pp.CountNum == count_size.size() - 1) {
+				Set<String> set = pp.FinalCountNum.keySet();
+				for (String key : set) {
+					if (! pp.per_count_map.get(key).equals(pp.FinalCountNum.get(key))){
+						System.out.println("The data for " + pp.PPNm + " at " + pp.CountNum + " have problems.");
+						Boolean tem_bool = false;
+						total_bool = total_bool && tem_bool;
+					}
+				}
+			}
+		}
+		if (total_bool) {
+			System.out.println(" the data is consistent");
+		}

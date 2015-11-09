@@ -1,0 +1,419 @@
+# COMP3620/6320 Artificial Intelligence
+# The Australian National University - 2014
+# Nathan Robinson (nathan.m.robinson@gmail.com)
+
+""" Student Details
+    Student Name: Sai Ma
+    Student number: u5224340
+    Date: 9/05/2014
+"""
+
+
+""" This file contains the methods you need to implement to create a basic
+    (non-split) encoding of planning as SAT.
+    
+    You can work your way through the exercises below to build up the encoding.
+    
+    We strongly recommend that you test as you go on some of the small benchmark
+    problems.
+    
+    Here is a simple example to run the problem on the smallest Miconics instance:
+    
+    python planner.py benchmarks/miconic/domain.pddl benchmarks/miconic/problem01.pddl m01 4
+    
+    You might want to implement the plan extraction method after you implement
+    the method to create the CNF variables. You will then be able to generate
+    (probably incorrect) plans as you add more constraints.
+    
+    To test the fluent mutex axioms and reachable action axioms you will need
+    to turn on the plangraph computation "-l true".
+    
+    Remember, it is relatively easy to figure out where you have gone wrong
+    if the SAT solver finds wrong plans -- for example if the plan validator
+    indicates that an action has an unsatisfied precondition, then there is
+    probably something wrong with your precondition clauses or your frame
+    axioms. However, if the SAT instance is unsatisfiable, then you will likely
+    have to start removing constraints to figure out where you went wrong.
+    
+    To help you debug your encoding, you can use the argument "-d true" to write
+    an annotated CNF file with the clauses you are generating. Warning: Looking
+    through this for large problems will be nearly impossible, so test on the
+    small instances.
+    
+    Sometimes SAT encodings of planning problems can end up BIG (gigs) because
+    there are just so many actions. Either use the argument "-r true" or
+    periodically clear out your tmp_files directory.
+    
+    This system is designed to run on x64 Linux machines. This is unavoidable
+    because we need to call and run external grounding and SAT solving programs.
+    
+    This software will NOT work on Windows. It may work on Mac. I suggest using
+    a virtural machine, working over svn, or working in the labs if you
+    do not have a linux installation. Even better, just install linux along side
+    whatever OS you normall use. It is almost impossible to do serious computer
+    science research (or even use research software like this) without linux.
+"""
+
+
+from utilities import encoding_error_code
+from encoding_base import EncodingException, Encoding
+from strips_problem import Action, Proposition
+
+encoding_class = 'BasicEncoding'
+
+class BasicEncoding(Encoding):
+    """ A simple basic encoding along the lines of SatPlan06 with full frame
+        axioms.
+    
+        Variables and clauses are created once 
+    """
+
+################################################################################
+#                You need to implement the following methods                   #
+################################################################################
+
+    def make_variables(self, horizon):
+        """ Make the variables (state and action fluents) for the problem.
+        
+            Question 1 - 2 Marks
+            
+            The method self.new_cnf_code(step, name, object) will return an int
+            representing a new CNF variable for you to use in your encoding.
+            
+            You need to make one variable for each Proposition at each step 0..k and
+            one variable for each Action at each step from 0..k-1.
+            
+            Access the actions and propositions from the lists self.problem.actions
+            and self.problem.propositions.
+            
+            Use str(proposition) to get name of a proposition and str(action) to get the
+            name of an action when calling self.new_cnf_code.
+            
+            For object, you should just pass the Proposition or Action object.
+
+            So, self.new_cnf_code(4, str(a), a) will return an int representing the 
+            CNF variable for action a, at step 4.
+
+            Since you will need to use these variables to make your constraints
+            later, you should store them in self.action_fluent_codes and 
+            self.proposition_fluent_codes.
+
+            These should map each (Action, step) pair and each (Proposition, step)
+            pair to the appropriate code.
+            
+            Once you have made the variables, you can get the step, name, and object
+            (Action or Proposition) with the following:
+               - self.cnf_code_steps[code] 
+               - self.cnf_code_names[code]
+               - self.cnf_code_objects[code]
+           
+            You shouldn't need to use these until you come to extract the plan
+            generated by the SAT solver, but they might be useful for debugging!
+            
+            (BasicEncoding, int) -> None
+        """
+        self.action_fluent_codes = {}
+        self.proposition_fluent_codes = {}
+
+        """ *** YOUR CODE HERE *** """
+        
+    
+
+    def make_initial_state_and_goal_axioms(self, horizon):
+        """ Make clauses representing the initial state and goal.
+        
+            Question 2 - 2 Marks
+            
+            In this method, add clauses to the encoding which ensure that the
+            initial state of the problem holds at step 0. The Propostions which
+            must be true are in self.problem.pos_initial_state and the Propositions
+            which must be false are in self.problem.neg_initial_state.
+            
+            Every Proposition in the problem will be in one of these two sets.
+            
+            Also add clauses which ensure that the goal holds at the horizon.
+            Similarly to the start state, the goal clauses are in self.pos_goal.
+            
+            Not every Proposition will be in the goal. The truth values of other Propositions
+            should remain unconstrained.
+            
+            A clause is a list of positive or negative integers (representing positive and negative
+            literaus) using the variables  you created for Q1. Get the variables from
+            self.proposition_fluent_codes).
+            
+            Every clause has a type, which is represented by a string.
+            
+            Add clauses to the encoding with self.add_clause(clause, clause_type).
+            
+            The type of the start state clauses should be "start" and the type
+            of the goal clauses should be "goal".
+
+            (BasicEncoding, int) -> None 
+        """
+        
+        """ *** YOUR CODE HERE *** """
+        
+        
+        
+    def make_precondition_and_effect_axioms(self, horizon):
+        """ Make clauses representing action preconditions and effects.
+            
+            Question 3 - 4 Marks
+            
+            In this method, add clauses to the encoding which ensure that 
+            If an action is executed at step t = 0..k-1:
+                - its preconditions hold at step t and
+                - its effects hold at step t+1.
+                    (No action will both add and delete the same proposition)
+            
+            Add clauses with self.add_clause(clause, clause_type).
+            
+            In your clauses use the variables from self.action_fluent_codes and
+            self.proposition_fluent_codes.
+            
+            Precondition clauses have the type 'pre' and effect clauses have the
+            type "eff".
+            
+            Don't forget to look in strips_problem.py for the data structures
+            you need to use!
+            
+            (BasicEncoding, int) -> None
+        """
+        
+        """ *** YOUR CODE HERE *** """
+
+
+    def make_explanatory_frame_axioms(self, horizon):
+        """ Make clauses representing explanatory frame axioms.
+            
+            Question 4 - 6 Marks
+            
+            In this method, add clauses to the encoding which ensure that 
+            If a proposition p is true at step t = 1..k:
+                - either p is true at t-1 or
+                - an action is executed at t-1 which added p.
+                
+            If a proposition p is false at step t = 1..k:
+                - either p is false at t-1 or
+                - an action is executed at t-1 which deletes p
+            
+            Add clauses with self.add_clause(clause, clause_type).
+            
+            In your clauses use the variables from self.action_fluent_codes and self.proposition_fluent_codes.
+            
+            These clauses have the type "frame".
+            
+            To make this process easier, Proposition objects have lists of the actions
+            which have them as positive and negative and effects.
+            
+            (BasicEncoding, int) -> None
+        """
+        
+        """ *** YOUR CODE HERE *** """
+
+
+    def make_serial_mutex_axioms(self, horizon):
+        """ Make clauses representing serial mutex.
+            
+            Question 5 - 4 Marks
+            
+            In this method, add clauses to the encoding which ensure that at most
+            one action is executed at each step t = 0..k. (It could be the case
+            that no actions are executed at some steps).
+            
+            To get full marks, you should add as few clauses as possible. Notice
+            that actions with conflicting effects are already prevented from
+            being executed in parallel.
+            
+            Add clauses with self.add_clause(clause, clause_type).
+            
+            In your clauses use the variables from self.action_fluent_codes.
+            
+            These clauses have the type "mutex".
+            
+            (BasicEncoding, int) -> None
+        """
+        
+        """ *** YOUR CODE HERE *** """
+        
+
+
+    def make_interference_mutex_axioms(self, horizon):
+        """ Make clauses preventing interfering actions from being executed in parallel.
+            
+            Question 6 - 4 Marks
+            
+            In this method, add clauses to the encoding which ensure that two
+            action can not be executed in parallel at a step t == 0..k if they
+            interfere.
+
+            Two actions a1 and a2 interfere if there is a Proposition p such that
+            p in EFF-(a1) and p in PRE(a2).
+
+            To get full marks, you should not add clauses for interfering actions
+            if their parallel execution is already prevented by conflict due to
+            effect clauses. Also, careful not to add duplicate clauses!
+
+            Add clauses with self.add_clause(clause, clause_type).
+            
+            In your clauses use the variables from self.action_fluent_codes.
+            
+            These clauses have the type "mutex".
+            
+            (BasicEncoding, int) -> None
+        """
+        
+        """ *** YOUR CODE HERE *** """
+        
+
+
+    def make_reachable_action_axioms(self, horizon):
+        """ Make unit clauses preventing actions from being executed before they
+            become available in the plangraph.
+            
+            Question 7 - 1 Marks
+            
+            In this method, add clauses to the encoding which ensure that
+            an action is not executed before the first step it is available
+            in self.problem.action_first_step.
+            
+            For example, if self.problem.action_first_step[action1] = 5, then
+            you would introduce clauses stopping action1 from being executed
+            at steps 0..4.
+            
+            These clauses are not required for correctness, but may improve performance.
+
+            Add clauses with self.add_clause(clause, clause_type).
+            
+            In your clauses use thevariables from self.action_fluent_codes.
+            
+            These clauses have the type "reach".
+            
+            (BasicEncoding, int) -> None
+        """
+        
+
+
+    def make_fluent_mutex_axioms(self, horizon):
+        """ Make clauses representing fluent mutex as computed by the plangraph.
+            
+            Question 8 - 2 Marks
+            
+            In this method, add clauses to the encoding which ensure that
+            pairs of propositions cannot both be true at the same time.
+            These constraints are computed when the plangraph is generated.
+            
+            These clauses are not required for correctness, but usually make
+            planning faster by causing the SAT solver to backtrack earlier.
+            
+            The dictonary self.problem.fluent_mutex maps integers representing
+            planning steps to lists of proposition mutex relationships at each step
+            from 1...n, where n is the step that the plangraph levels off.
+            It can be assumed that the mutex relationships at step n hold for
+            every step > n.
+            
+            It is possible that the current horizon is less than n. In this case,
+            mutex relationships larger than the horizon should, of course, be ignored.
+            
+            As the initial state clauses completely determine the truth values of
+            fluents at step 0, there is no need for fluent mutex clauses there.
+            
+            Each list of mutex relationships in self.problem.fluent_mutex
+            will be as follows:
+            
+              [(f1, f2), ....]
+              
+            Say, we have (f1, f2), then there should be a clause [-f1, -f2]
+            (obviously substitiuting the appropriate CNF codes for f1 and f2,
+            depending on the step.
+
+            Add clauses with self.add_clause(clause, clause_type).
+            
+            In your clauses use the variables from self.proposition_fluent_codes.
+            
+            These clauses have the type "fmutex".
+            
+            (BasicEncoding, int) -> None
+        """
+        
+        """ *** YOUR CODE HERE *** """
+        
+
+    def build_plan(self, horizon):
+        """Build a plan from the true variables in a satisfying valuation found
+           by the SAT solver.
+        
+           Question 9 - 2 marks
+           
+           self.true_vars is a set with the codes of the CNF variables which the
+           SAT solver has set to true in the satisfying valuation it found.
+           
+           You can get the step, name, and object (Action/Proposition) of each variable
+           (state or action fluent) with:
+               - self.cnf_code_steps[code]
+               - self.cnf_code_names[code]
+               - self.cnf_code_objects[code]
+           
+           You can check if an object is an Action or Proposition with
+               - isinstance(obj, Action) and
+               - isinstance(obj, Proposition)
+
+           You should add the plan to self.plan, which has the structure [[Action], [Action], ...].
+           
+           For each step t = 0..k-1, it has a (possibly empty) list of the
+           actions which were executed at that step.
+           
+           So, if we have a0 and a1 at step 0 and a2 at step 2, then self.plan
+           will be:
+               
+               [[a0, a1], [], [a2]]
+           
+           The system will validate the plans you generate, so make sure you
+           test your encodings on a number of different problems.
+           
+           (BasicEncoding, int) -> None
+        """
+        self.plan = []
+        
+        """ *** YOUR CODE HERE *** """
+
+
+################################################################################
+#                    Do not change the following method                        #
+################################################################################
+
+    def encode(self, horizon, exec_semantics, plangraph_constrains):
+        """ Make an encoding of self.problem for the given horizon.
+        
+            For this encoding, we have broken this method up into a number
+            of sub-methods that you need to implement.
+
+           (BasicEncoding, int, str, str) -> None
+        """
+        
+        self.make_variables(horizon)
+        
+        self.make_initial_state_and_goal_axioms(horizon)
+        
+        self.make_precondition_and_effect_axioms(horizon)
+        
+        self.make_explanatory_frame_axioms(horizon)
+        
+        if exec_semantics == "serial":
+            self.make_serial_mutex_axioms(horizon)
+        elif exec_semantics == "parallel":
+            self.make_interference_mutex_axioms(horizon)
+        else: assert False
+        
+        if self.problem.fluent_mutex is not None:
+            #These constraints will only be included if the plangraph was computed
+            if plangraph_constraints == "both":
+                self.make_reachable_action_axioms(horizon)
+                self.make_fluent_mutex_axioms(horizon)
+            elif plangraph_constraints == "fmutex":
+                self.make_fluent_mutex_axioms(horizon)
+            elif plangraph_constraints == "reachable":
+                self.make_reachable_action_axioms(horizon)
+
+
+
